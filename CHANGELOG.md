@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.1
+
+- Fix compilation issue by switching from `size_of` to
+  `size_of_val`.
+
 ## v0.3.0
 
 - The `PathBuf` pre-allocation is now based on bytes, rather than
