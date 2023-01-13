@@ -45,7 +45,7 @@ macro_rules! pathbuf {
     ( $( $part:expr ),* ) => {{
         use std::path::PathBuf;
 
-        let mut temp = PathBuf::new();
+        let mut temp = PathBuf::with_capacity( $( (|_| 1)($part) + )* 0);
 
         $(
             temp.push($part);
