@@ -1,0 +1,7 @@
+[package]
+name = "pathbuf"
+description = "A macro to conveniently build PathBufs"
+repository = "https://github.com/alilleybrinker/pathbuf"
+version = "0.1.0"
+edition = "2021"
+
