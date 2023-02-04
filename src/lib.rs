@@ -23,16 +23,16 @@
 //! As the macro relies on [`std::path::PathBuf::push`] there is also no protection against path traversal attacks.
 //! Therefore no path element shall be untrusted user input without validation or sanitisation.
 //!
-//! An example for path traversal on an UNIX system could be
+//! An example for a path traversal/override on an UNIX system:
 //!
 //! ```
 //! # use pathbuf::pathbuf;
-//! # use std::path::Path;
+//! # use std::path::PathBuf;
 //! #
 //! # #[cfg(unix)]
 //! # {
-//! let user_input = "../etc/shadow";
-//! assert_eq!(pathbuf!["/tmp", user_input], PathBuf::from("/tmp/../etc/shadow"));
+//! let user_input = "/etc/shadow";
+//! assert_eq!(pathbuf!["/tmp", user_input], PathBuf::from("/etc/shadow"));
 //! # }
 //! ```
 //!
