@@ -94,3 +94,82 @@ mod tests {
         assert_eq!(p, expected);
     }
 }
+
+/// A safe wrapper for a path with only a single component.
+/// This prevents path traversal attacks.
+///
+/// It just allows a single normal path element and no parent, root directory or prefix like `C:`.
+#[derive(Clone, Debug, PartialEq, PartialOrd, Eq, Ord, Hash)]
+pub struct PathComponent {
+    path: std::path::PathBuf,
+}
+
+impl PathComponent {
+    /// It creates the wrapped `PathComponent` if it's valid.
+    /// Otherwise it will return `None`.
+    ///
+    /// ```
+    /// # use pathbuf::PathComponent;
+    /// # #[cfg(unix)]
+    /// # {
+    /// let some_valid_folder: PathComponent = PathComponent::new("foo").unwrap();
+    /// let some_valid_file: PathComponent = PathComponent::new("bar.txt").unwrap();
+    /// assert!(PathComponent::new("/etc/shadow").is_none());
+    /// # }
+    /// ```
+    pub fn new<S: Into<std::path::PathBuf>>(component: S) -> Option<Self> {
+        let component = Self {
+            path: component.into(),
+        };
+
+        component.is_valid().then_some(component)
+    }
+
+    fn is_valid(&self) -> bool {
+        use std::path::Component;
+
+        let mut components = self.path.components();
+        matches!(
+            (components.next(), components.next()),
+            (Some(Component::Normal(_)), None)
+        )
+    }
+}
+
+impl std::ops::Deref for PathComponent {
+    type Target = std::path::Path;
+
+    fn deref(&self) -> &Self::Target {
+        &self.path
+    }
+}
+
+impl AsRef<std::path::Path> for PathComponent {
+    fn as_ref(&self) -> &std::path::Path {
+        &self.path
+    }
+}
+
+/// This allows to push just a [`PathComponent`] to a [`std::path::PathBuf`].
+///
+/// ```
+/// use std::path::PathBuf;
+/// # use pathbuf::{pathbuf, PathComponent, PushPathComponent};
+/// # #[cfg(unix)]
+/// # {
+/// let mut path = PathBuf::new();
+/// path.push_component(PathComponent::new("foo").unwrap());
+/// path.push_component(PathComponent::new("bar.txt").unwrap());
+///
+/// assert_eq!(path, pathbuf!["foo", "bar.txt"])
+/// # }
+/// ```
+pub trait PushPathComponent {
+    fn push_component(&mut self, component: PathComponent);
+}
+
+impl PushPathComponent for std::path::PathBuf {
+    fn push_component(&mut self, component: PathComponent) {
+        self.push(component);
+    }
+}
