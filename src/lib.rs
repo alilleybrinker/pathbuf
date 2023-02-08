@@ -18,6 +18,24 @@
 //! }
 //! ```
 //!
+//! # Security
+//!
+//! As the macro relies on [`std::path::PathBuf::push`] there is also no protection against path traversal attacks.
+//! Therefore no path element shall be untrusted user input without validation or sanitisation.
+//!
+//! An example for a path traversal/override on an UNIX system:
+//!
+//! ```
+//! # use pathbuf::pathbuf;
+//! # use std::path::PathBuf;
+//! #
+//! # #[cfg(unix)]
+//! # {
+//! let user_input = "/etc/shadow";
+//! assert_eq!(pathbuf!["/tmp", user_input], PathBuf::from("/etc/shadow"));
+//! # }
+//! ```
+//!
 //! [pathbuf]: macro.pathbuf.html
 //! [std_vec]: https://doc.rust-lang.org/std/macro.vec.html "Documentation for std::vec (macro)"
 //! [std_path_pathbuf]: https://doc.rust-lang.org/std/path/struct.PathBuf.html "Documentation for std::path::PathBuf (struct)"
