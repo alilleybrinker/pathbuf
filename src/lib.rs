@@ -124,6 +124,25 @@ impl PathComponent {
         component.is_valid().then_some(component)
     }
 
+    #[cfg(feature = "sanitise")]
+    /// This will sanitise the input and therefore all inputs are valid.
+    /// Unless there is a bug in the sanitisation, then it will `panic`.
+    ///
+    /// ```
+    /// # use pathbuf::PathComponent;
+    /// # #[cfg(unix)]
+    /// # {
+    /// assert_eq!(
+    ///     PathComponent::with_sanitise("/etc/shadow"),
+    ///     PathComponent::new("etcshadow").unwrap(),
+    /// );
+    /// # }
+    /// ```
+    pub fn with_sanitise(component: &str) -> Self {
+        // TODO: sanitise
+        Self::new(component).expect("The path sanitisation wasn't succesful")
+    }
+
     fn is_valid(&self) -> bool {
         use std::path::Component;
 
