@@ -126,7 +126,7 @@ impl PathComponent {
 
     #[cfg(feature = "sanitise")]
     /// This will sanitise the input and therefore all inputs are valid.
-    /// Unless there is a bug in the sanitisation, then it will `panic`.
+    /// Unless there is a bug in the sanitisation then it would `panic`.
     ///
     /// ```
     /// # use pathbuf::PathComponent;
@@ -134,13 +134,21 @@ impl PathComponent {
     /// # {
     /// assert_eq!(
     ///     PathComponent::with_sanitise("/etc/shadow"),
-    ///     PathComponent::new("etcshadow").unwrap(),
+    ///     PathComponent::new("etc_shadow").unwrap(),
     /// );
     /// # }
     /// ```
+    ///
+    /// The sanitisation algorithm isn't considered stable.
+    /// Therefore the sanitised path could change in the future for the same input.
     pub fn with_sanitise(component: &str) -> Self {
-        // TODO: sanitise
-        Self::new(component).expect("The path sanitisation wasn't succesful")
+        let sanitised_component = sanitize_filename_reader_friendly::sanitize(component);
+        Self::new(sanitised_component).unwrap_or_else(|| {
+            panic!(
+                "Expected a sanitised path of the original path '{}'",
+                component
+            )
+        })
     }
 
     fn is_valid(&self) -> bool {
