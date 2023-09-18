@@ -99,21 +99,21 @@ mod tests {
 ///
 /// It just allows a single normal path element and no parent, root directory or prefix like `C:`.
 #[derive(Clone, Debug, PartialEq, PartialOrd, Eq, Ord, Hash)]
-pub struct PathComponent {
+pub struct SinglePathComponent {
     path: PathBuf,
 }
 
-impl PathComponent {
+impl SinglePathComponent {
     /// It creates the wrapped `PathComponent` if it's valid.
     /// Otherwise it will return `None`.
     ///
     /// ```
-    /// # use pathbuf::PathComponent;
+    /// # use pathbuf::SinglePathComponent;
     /// # #[cfg(unix)]
     /// # {
-    /// let some_valid_folder: PathComponent = PathComponent::new("foo").unwrap();
-    /// let some_valid_file: PathComponent = PathComponent::new("bar.txt").unwrap();
-    /// assert!(PathComponent::new("/etc/shadow").is_none());
+    /// let some_valid_folder: SinglePathComponent = SinglePathComponent::new("foo").unwrap();
+    /// let some_valid_file: SinglePathComponent = SinglePathComponent::new("bar.txt").unwrap();
+    /// assert!(SinglePathComponent::new("/etc/shadow").is_none());
     /// # }
     /// ```
     pub fn new<S: Into<PathBuf>>(component: S) -> Option<Self> {
@@ -129,12 +129,12 @@ impl PathComponent {
     /// Unless there is a bug in the sanitisation then it would `panic`.
     ///
     /// ```
-    /// # use pathbuf::PathComponent;
+    /// # use pathbuf::SinglePathComponent;
     /// # #[cfg(unix)]
     /// # {
     /// assert_eq!(
-    ///     PathComponent::with_sanitise("/etc/shadow"),
-    ///     PathComponent::new("etc_shadow").unwrap(),
+    ///     SinglePathComponent::with_sanitise("/etc/shadow"),
+    ///     SinglePathComponent::new("etc_shadow").unwrap(),
     /// );
     /// # }
     /// ```
@@ -162,7 +162,7 @@ impl PathComponent {
     }
 }
 
-impl std::ops::Deref for PathComponent {
+impl std::ops::Deref for SinglePathComponent {
     type Target = std::path::Path;
 
     fn deref(&self) -> &Self::Target {
@@ -170,32 +170,32 @@ impl std::ops::Deref for PathComponent {
     }
 }
 
-impl AsRef<std::path::Path> for PathComponent {
+impl AsRef<std::path::Path> for SinglePathComponent {
     fn as_ref(&self) -> &std::path::Path {
         &self.path
     }
 }
 
-/// This allows to push just a [`PathComponent`] to a [`std::path::PathBuf`].
+/// This allows to push just a [`SinglePathComponent`] to a [`std::path::PathBuf`].
 ///
 /// ```
 /// use std::path::PathBuf;
-/// # use pathbuf::{pathbuf, PathComponent, PushPathComponent};
+/// # use pathbuf::{pathbuf, SinglePathComponent, PushPathComponent};
 /// # #[cfg(unix)]
 /// # {
 /// let mut path = PathBuf::new();
-/// path.push_component(PathComponent::new("foo").unwrap());
-/// path.push_component(PathComponent::new("bar.txt").unwrap());
+/// path.push_component(SinglePathComponent::new("foo").unwrap());
+/// path.push_component(SinglePathComponent::new("bar.txt").unwrap());
 ///
 /// assert_eq!(path, pathbuf!["foo", "bar.txt"])
 /// # }
 /// ```
 pub trait PushPathComponent {
-    fn push_component(&mut self, component: PathComponent);
+    fn push_component(&mut self, component: SinglePathComponent);
 }
 
 impl PushPathComponent for PathBuf {
-    fn push_component(&mut self, component: PathComponent) {
+    fn push_component(&mut self, component: SinglePathComponent) {
         self.push(component);
     }
 }
@@ -241,7 +241,7 @@ macro_rules! pathbuf_safe {
 
         $(
             temp = temp.and_then(|mut tmp_path| {
-                let component = $crate::PathComponent::new($part)?;
+                let component = $crate::SinglePathComponent::new($part)?;
                 tmp_path.push_component(component);
                 Some(tmp_path)
             });
@@ -261,7 +261,7 @@ macro_rules! pathbuf_safe {
         });
         $(
             temp = temp.and_then(|mut tmp_path| {
-                let component = $crate::PathComponent::new($part)?;
+                let component = $crate::SinglePathComponent::new($part)?;
                 tmp_path.push_component(component);
                 Some(tmp_path)
             });
