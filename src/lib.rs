@@ -204,14 +204,14 @@ impl PushPathComponent for PathBuf {
 ///
 /// ```
 /// # use std::path::PathBuf;
-/// # use pathbuf::pathbuf_safe;
+/// # use pathbuf::pathbuf_secure;
 /// #
 /// # #[cfg(unix)]
 /// # {
 /// let user_input = "foo.txt";
-/// assert_eq!(pathbuf_safe!["tmp", user_input].unwrap(), PathBuf::from("tmp/foo.txt"));
+/// assert_eq!(pathbuf_secure!["tmp", user_input].unwrap(), PathBuf::from("tmp/foo.txt"));
 /// let user_input = "/etc/shadow";
-/// assert!(pathbuf_safe!["tmp", user_input].is_none());
+/// assert!(pathbuf_secure!["tmp", user_input].is_none());
 /// # }
 /// ```
 ///
@@ -220,19 +220,19 @@ impl PushPathComponent for PathBuf {
 ///
 /// ```
 /// # use std::path::PathBuf;
-/// # use pathbuf::pathbuf_safe;
+/// # use pathbuf::pathbuf_secure;
 /// #
 /// # #[cfg(unix)]
 /// # {
 /// let user_input = "foo.txt";
 /// assert_eq!(
-///     pathbuf_safe![allow "/var/tmp", user_input].unwrap(),
+///     pathbuf_secure![allow "/var/tmp", user_input].unwrap(),
 ///     PathBuf::from("/var/tmp/foo.txt"),
 /// );
 /// # }
 /// ```
 #[macro_export]
-macro_rules! pathbuf_safe {
+macro_rules! pathbuf_secure {
     ( $( $part:expr ),* ) => {{
         use std::path::PathBuf;
         use $crate::PushPathComponent;
@@ -271,10 +271,10 @@ macro_rules! pathbuf_safe {
     }};
 
     ($( $part:expr, )*) => {{
-        $crate::pathbuf_safe![$($part),*]
+        $crate::pathbuf_secure![$($part),*]
     }};
 
     (allow $( $part:expr, )*) => {{
-        $crate::pathbuf_safe![allow $($part),*]
+        $crate::pathbuf_secure![allow $($part),*]
     }};
 }
