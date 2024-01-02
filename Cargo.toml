@@ -2,7 +2,7 @@
 name = "pathbuf"
 description = "A macro to conveniently build PathBufs"
 repository = "https://github.com/alilleybrinker/pathbuf"
-version = "0.3.1"
+version = "1.0.0"
 edition = "2021"
 license = "Apache-2.0"
 
