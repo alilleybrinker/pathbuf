@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Allows the workflow to be run on demand, e.g. to re-check the crate
+  # against a newly released toolchain without pushing a commit.
+  workflow_dispatch:
 
 env:
   CARGO_TERM_COLOR: always
