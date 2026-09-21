@@ -2,7 +2,11 @@
 name = "pathbuf"
 description = "A macro to conveniently build PathBufs"
 repository = "https://github.com/alilleybrinker/pathbuf"
+documentation = "https://docs.rs/pathbuf"
+readme = "README.md"
+keywords = ["path", "pathbuf", "macro", "filesystem"]
+categories = ["filesystem", "rust-patterns"]
 version = "1.0.0"
 edition = "2021"
+rust-version = "1.56"
 license = "Apache-2.0"
-
